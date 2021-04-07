@@ -7,7 +7,7 @@ import { UserModule } from './user/user.module';
 
 const databaseUrl =
   process.env.DATABASE_URL ||
-  'mysql://usr:User12345@localhost:3306/service_user';
+  'mysql://service_user:localPassword@localhost:3306/service_user';
 
 @Module({
   imports: [
@@ -15,16 +15,12 @@ const databaseUrl =
       autoSchemaFile: true,
     }),
     EventStoreModule.register({
-      type: 'event-store',
-      tcpEndpoint: {
-        host: 'localhost',
-        port: 1113,
-      },
+      type: 'nats',
+      clusterId: 'test-cluster',      
       options: {
-        defaultUserCredentials: {
-          username: 'admin',
-          password: 'changeit',
-        },
+        url: 'nats://localhost:4222',
+        reconnect: true,
+        maxReconnectAttempts: 10
       },
     }),
     TypeOrmModule.forRoot({

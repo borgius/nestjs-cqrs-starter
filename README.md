@@ -22,6 +22,10 @@ git clone https://github.com/hardyscc/nestjs-cqrs-starter.git <Your_Project_Name
 cd <Your_Project_Name>
 
 npm install
+
+# Install global packages
+npm install -g @nestjs/cli nps
+
 ```
 
 ## Usage
@@ -29,27 +33,6 @@ npm install
 ### Start MySQL
 
 Start MySQL docker instance.
-
-```bash
-docker run --name some-mysql -d -p 3306:3306 -e "MYSQL_ROOT_PASSWORD=Admin12345" -e "MYSQL_USER=usr" -e "MYSQL_PASSWORD=User12345" -e "MYSQL_DATABASE=development" bitnami/mysql:5.7.27
-```
-
-Connect using MySQL docker instance command line.
-
-```bash
-docker exec -it some-mysql mysql -uroot -p"Admin12345"
-```
-
-Create the Databases for testing
-
-```sql
-CREATE DATABASE service_user;
-GRANT ALL PRIVILEGES ON service_user.* TO 'usr'@'%';
-
-CREATE DATABASE service_account;
-GRANT ALL PRIVILEGES ON service_account.* TO 'usr'@'%';
-FLUSH PRIVILEGES;
-```
 
 Clean-up all data if need to re-testing again
 
@@ -59,10 +42,6 @@ DELETE FROM service_user.USER;
 ```
 
 ### Start EventStore
-
-```bash
-docker run --name some-eventstore -d -p 2113:2113 -p 1113:1113 eventstore/eventstore
-```
 
 Create the Persistent Subscriptions
 
@@ -81,14 +60,7 @@ curl -L -X PUT "http://localhost:2113/subscriptions/%24svc-account/user" \
 ### Start the microservices
 
 ```bash
-# Start the user service
-nest start service-user
-
-# Start the account service
-nest start service-account
-
-# start the gateway
-nest start gateway
+nps start.dev
 ```
 
 ## Testing

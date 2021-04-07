@@ -20,13 +20,13 @@ const Sagas = [CreateUserSaga];
   imports: [
     CqrsModule,
     EventStoreModule.registerFeature({
-      type: 'event-store',
+      type: 'nats',
       featureStreamName: '$svc-user',
       subscriptions: [
         {
           type: EventStoreSubscriptionType.Persistent,
           stream: '$svc-account',
-          persistentSubscriptionName: 'user',
+          durableName: 'user',
         },
       ],
       eventHandlers: {

@@ -1,0 +1,53 @@
+version: "3.8"
+
+networks:
+  hostnet:
+    external: true
+
+services:
+  mysql:
+    image: "mysql:5.7.27"
+    container_name: mysql
+    restart: always
+    networks:
+      - hostnet  
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=Admin12345
+      - MYSQL_USER=usr
+      - MYSQL_PASSWORD=localPassword
+      - MYSQL_DATABASE=development
+    volumes:
+      - ./devops/mysql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
+    command: --default-authentication-plugin=mysql_native_password  
+
+  nats-streaming:
+    image: nats-streaming
+    container_name: nats-streaming
+    restart: always
+    networks:
+      - hostnet  
+    depends_on:
+      - mysql
+    entrypoint:
+      - /nats-streaming-server
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    command: -store SQL --sql_driver mysql --sql_source nss:localPassword@tcp"(mysql)"/nss      
+
+  nats-streaming-ui:
+    image: "piotrpersona/nats-streaming-ui:latest"
+    container_name: nats-streaming-ui
+    restart: always
+    networks:
+      - hostnet  
+    depends_on:
+      - nats-streaming
+    ports:
+      - "8282:8282"
+    environment:
+      - "STAN_URL=http://nats-streaming:4222"
+      - "STAN_MONITOR_URL=http://nats-streaming:8222"
+      - STAN_CLUSTER=test-cluster

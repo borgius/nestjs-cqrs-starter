@@ -1,0 +1,4 @@
+CREATE USER 'usr'@'%' IDENTIFIED BY 'localPassword'; 
+GRANT ALL PRIVILEGES ON *.* TO 'usr'@'%';
+FLUSH PRIVILEGES;
+
